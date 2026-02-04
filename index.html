@@ -52,15 +52,15 @@ button:hover { transform: scale(1.1); }
 .slideshow {
   width: 350px;
   height: 250px;
-  margin: 0 auto 20px;
+  margin: 0 auto 0;
   border-radius: 15px;
   overflow: hidden;
   box-shadow: 0 10px 20px rgba(0,0,0,0.3);
 }
 
 .slideshow img {
-  width: 90%;
-  height: 90%;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   display: none;
 }
@@ -99,7 +99,8 @@ button:hover { transform: scale(1.1); }
 </div>
 
 <!-- Background music -->
-<audio id="bgMusic" src="romantic.mp3" autoplay loop></audio>
+<button onclick="document.getElementById('bgMusic').play()">🎵 Play Music</button>
+<audio id="bgMusic" src="romantic.mp3" loop></audio>
 
 <script>
 // Typing effect
