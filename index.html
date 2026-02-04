@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>For my love Uma ❤️</title>
+<title>For Someone Special ❤️</title>
 <style>
 body {
   margin: 0;
@@ -12,25 +12,52 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh;
   text-align: center;
   overflow: hidden;
   color: white;
 }
 
+/* Card container */
 .card {
   background: rgba(255,255,255,0.2);
   backdrop-filter: blur(10px);
-  padding: 20px;
+  padding: 30px;
   border-radius: 20px;
-  max-width: 450px;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   position: relative;
   z-index: 2;
 }
 
-h1 { margin-bottom: 10px; }
-p { margin-bottom: 20px; }
+/* Slideshow */
+.slideshow {
+  width: 400px;
+  height: 250px;
+  margin-bottom: 20px;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+}
 
+.slideshow img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: none;
+}
+
+/* Typing message */
+#typed {
+  margin: 10px 0 20px 0;
+  text-align: center;
+  font-size: 18px;
+  max-width: 100%;
+}
+
+/* Buttons */
 button {
   padding: 12px 25px;
   margin: 10px;
@@ -46,25 +73,6 @@ button {
 
 button:hover { transform: scale(1.1); }
 
-#response { font-weight: bold; margin-top: 20px; }
-
-/* Slideshow */
-.slideshow {
-  width: 350px;
-  height: 250px;
-  margin: 0 auto 0;
-  border-radius: 15px;
-  overflow: hidden;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-}
-
-.slideshow img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: none;
-}
-
 /* Floating hearts */
 .heart {
   position: absolute;
@@ -76,6 +84,31 @@ button:hover { transform: scale(1.1); }
 @keyframes float {
   from { transform: translateY(100vh) scale(0.5); opacity: 1; }
   to { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+}
+
+/* Fireworks container */
+#fireworks {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 999;
+}
+
+/* YES celebration message */
+#yesMessage {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 50px;
+  font-weight: bold;
+  color: #ff4d6d;
+  text-shadow: 0 0 20px white;
+  display: none;
+  z-index: 1000;
 }
 </style>
 </head>
@@ -90,6 +123,7 @@ button:hover { transform: scale(1.1); }
   <img src="photo5.jpg" class="slide">
 </div>
 
+<!-- Card content -->
 <div class="card">
   <h1>Hi Love ❤️</h1>
   <p id="typed"></p>
@@ -98,12 +132,15 @@ button:hover { transform: scale(1.1); }
   <p id="response"></p>
 </div>
 
+<!-- Fireworks canvas -->
+<canvas id="fireworks"></canvas>
+<div id="yesMessage">❤️ I LOVE YOU ❤️</div>
+
 <!-- Background music -->
-<button onclick="document.getElementById('bgMusic').play()">🎵 Play Music</button>
 <audio id="bgMusic" src="romantic.mp3" loop></audio>
 
 <script>
-// Typing effect
+// -------- Typing effect --------
 const message = "From the moment you came into my life, everything became brighter 💕 Will you be my Valentine?";
 let i = 0;
 function typeWriter() {
@@ -115,20 +152,23 @@ function typeWriter() {
 }
 typeWriter();
 
-// YES button
+// -------- YES button with fireworks --------
 function sayYes() {
   document.getElementById("response").innerHTML = "Yay!! You just made me the happiest person alive ❤️💍";
+  document.querySelector('.card').style.display = 'none';
+  document.getElementById('yesMessage').style.display = 'block';
+  startFireworks();
 }
 
-// NO button moves
+// -------- NO button moves --------
 function moveNo() {
   const btn = document.querySelector(".no");
   btn.style.position = "absolute";
-  btn.style.top = Math.random() * window.innerHeight + "px";
-  btn.style.left = Math.random() * window.innerWidth + "px";
+  btn.style.top = Math.random() * (window.innerHeight - 50) + "px";
+  btn.style.left = Math.random() * (window.innerWidth - 100) + "px";
 }
 
-// Floating hearts
+// -------- Floating hearts --------
 setInterval(() => {
   const heart = document.createElement("div");
   heart.className = "heart";
@@ -139,7 +179,7 @@ setInterval(() => {
   setTimeout(() => heart.remove(), 5000);
 }, 300);
 
-// Simple slideshow
+// -------- Slideshow --------
 let slideIndex = 0;
 const slides = document.getElementsByClassName("slide");
 function showSlides() {
@@ -150,6 +190,70 @@ function showSlides() {
   setTimeout(showSlides, 3000);
 }
 showSlides();
+
+// -------- Background music on first click --------
+document.addEventListener('click', function startMusic() {
+  const audio = document.getElementById('bgMusic');
+  if(audio.paused){
+    audio.play().catch(err => console.log(err));
+  }
+  document.removeEventListener('click', startMusic);
+});
+
+// -------- Simple fireworks --------
+function startFireworks() {
+  const canvas = document.getElementById('fireworks');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  let particles = [];
+
+  function createParticle(x, y) {
+    const color = `hsl(${Math.random()*360}, 100%, 50%)`;
+    particles.push({
+      x, y,
+      vx: (Math.random()-0.5)*10,
+      vy: (Math.random()-0.5)*10,
+      alpha: 1,
+      color
+    });
+  }
+
+  function updateParticles() {
+    ctx.clearRect(0,0,canvas.width, canvas.height);
+    for(let p of particles){
+      ctx.fillStyle = `rgba(${hexToRgb(p.color)}, ${p.alpha})`;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 3, 0, 2*Math.PI);
+      ctx.fill();
+      p.x += p.vx;
+      p.y += p.vy;
+      p.alpha -= 0.02;
+    }
+    particles = particles.filter(p => p.alpha > 0);
+    requestAnimationFrame(updateParticles);
+  }
+
+  function hexToRgb(hsl){
+    // convert hsl string to rgb
+    const temp = document.createElement("div");
+    temp.style.color = hsl;
+    document.body.appendChild(temp);
+    const rgb = window.getComputedStyle(temp).color;
+    document.body.removeChild(temp);
+    return rgb.match(/\d+/g).slice(0,3).join(",");
+  }
+
+  // Create particles in bursts
+  setInterval(() => {
+    const x = Math.random()*canvas.width;
+    const y = Math.random()*canvas.height/2;
+    for(let i=0;i<30;i++) createParticle(x,y);
+  }, 300);
+
+  updateParticles();
+}
 </script>
 </body>
 </html>
