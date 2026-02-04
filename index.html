@@ -24,7 +24,7 @@ body {
   backdrop-filter: blur(10px);
   padding: 30px;
   border-radius: 20px;
-  max-width: 500px;
+  max-width: 600px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -34,19 +34,25 @@ body {
 
 /* Slideshow */
 .slideshow {
-  width: 400px;
-  height: 250px;
+  width: 80vw;
+  max-width: 600px;
+  aspect-ratio: 16/9;
   margin-bottom: 20px;
   border-radius: 15px;
   overflow: hidden;
   box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+  position: relative;
 }
 
 .slideshow img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0.8; /* slightly transparent */
+  transition: opacity 1s ease-in-out;
 }
 
 /* Typing message */
@@ -86,7 +92,7 @@ button:hover { transform: scale(1.1); }
   to { transform: translateY(-10vh) scale(1.2); opacity: 0; }
 }
 
-/* Fireworks container */
+/* Fireworks canvas */
 #fireworks {
   position: fixed;
   top: 0;
@@ -116,7 +122,7 @@ button:hover { transform: scale(1.1); }
 
 <!-- Slideshow -->
 <div class="slideshow">
-  <img src="photo1.jpg" class="slide" style="display:block;">
+  <img src="photo1.jpg" class="slide" style="opacity:1;">
   <img src="photo2.jpg" class="slide">
   <img src="photo3.jpg" class="slide">
   <img src="photo4.jpg" class="slide">
@@ -179,14 +185,15 @@ setInterval(() => {
   setTimeout(() => heart.remove(), 5000);
 }, 300);
 
-// -------- Slideshow --------
+// -------- Slideshow with fade --------
 let slideIndex = 0;
 const slides = document.getElementsByClassName("slide");
+
 function showSlides() {
-  for(let s of slides) s.style.display = "none";
+  for(let s of slides) s.style.opacity = 0;
   slideIndex++;
   if(slideIndex > slides.length) slideIndex = 1;
-  slides[slideIndex-1].style.display = "block";
+  slides[slideIndex-1].style.opacity = 1;
   setTimeout(showSlides, 3000);
 }
 showSlides();
@@ -236,7 +243,6 @@ function startFireworks() {
   }
 
   function hexToRgb(hsl){
-    // convert hsl string to rgb
     const temp = document.createElement("div");
     temp.style.color = hsl;
     document.body.appendChild(temp);
@@ -245,7 +251,6 @@ function startFireworks() {
     return rgb.match(/\d+/g).slice(0,3).join(",");
   }
 
-  // Create particles in bursts
   setInterval(() => {
     const x = Math.random()*canvas.width;
     const y = Math.random()*canvas.height/2;
